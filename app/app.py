@@ -17,10 +17,7 @@ templates = Jinja2Templates("templates")
 app = FastAPI()
 DEBUG = True
 
-if DEBUG:
-	db = Database("/tmp/test.json")
-else:
-	db = Database("rental.json")
+db = Database("rental.json")
 
 DEFAULT_PIN_CODE = "332404"
 

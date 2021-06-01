@@ -190,20 +190,29 @@ class Database:
 
 if __name__ == "__main__": # testing
 	import os
-	if os.path.exists("/tmp/test.json"):
-		os.remove("/tmp/test.json")
-	db = Database("/tmp/test.json")
+	if os.path.exists("rental.json"):
+		os.remove("rental.json")
+	db = Database("rental.json")
+
+	# add new user like this
 	db.new_user("ankit", "saini", "ankit@nkit.dev", "some", "AK Plaza, Reengus")
-	user = db.get_user("a@a.dev", "some")
-	shop_id = db.new_shop("general store", "332404", "reengus")
+	user = db.get_user("ankit@nkit.dev", "some")
 
-	item_id = db.new_item("brush", 3.2)
+	# add new shop like this
+	shop_id = db.new_shop("general store", "332404", "Tagore Vihar, Reengus")
+
+	# add new item like this
+	item_id = db.new_item("Brush", 3.2)
+
+	# add item to the shop
 	db.add_item_to_shop(shop_id, item_id)
+
+	# create new order
 	db.new_order(user.id, item_id, shop_id)
 	db.new_order(user.id, item_id, shop_id)
 	db.new_order(user.id, item_id, shop_id)
 
-	item_id = db.new_item("soap", 7)
+	item_id = db.new_item("Soap", 7)
 	db.add_item_to_shop(shop_id, item_id)
 	db.new_order(user.id, item_id, shop_id)
 

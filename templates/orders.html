@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block body %}
+	<h6 class="text-center"> All orders will be delivered to "{{user.address}}"</h6>
+	<div>
+		<h3 class="text-center"> Cart </h3>
+		{% if not cart_orders %}
+			<h5 class="text text-center">Nothing in Cart yet. Try adding some stuff.</h5>
+		{% else %}
+		<div class = "container">
+		{% for order in cart_orders %}
+		<div class="card row text-capitalize">
+			<div class="card-body">
+				<h5 class="card-title">
+					{{items[order.item_id].name}}
+				</h5>
+				<p> qantity: {{order.quantity}} <br>  price: {{"%0.2f" | format(order.quantity * items[order.item_id].price)}}<br> shop: {{shops[order.shop_id].name}} </p>
+				
+			</div>
+		</div>
+		{% endfor %}
+		</div>
+		<div class="d-flex justify-content-center align-items-center">
+			<h4 class="text" style="margin: 10px"> Total: Rs {{total_cart_price}}</h4>
+			<button style="margin: 10px" class="btn btn-primary" onclick="place_cart_orders()">Place Order</button>
+		</div>
+		{% endif %}
+	</div>
+	<div style="margin-top: 30px;">
+		<h3 class="text-center"> Previous Orders </h3>
+		{% if not other_orders %}
+			No History of orders.
+		{% else %}
+		<div class = "container">
+		{% for order in other_orders %}
+		<div class="card row text-capitalize">
+			<div class="card-body">
+				<h5 class="card-title">
+					{{items[order.item_id].name}}
+				</h5>
+				<p> qantity: {{order.quantity}} <br>  price: {{"%0.2f" | format(order.quantity * items[order.item_id].price)}}<br> shop: {{shops[order.shop_id].name}}
+				<br> status: {{order.status.name}}</p>
+			</div>
+		</div>
+		{% endfor %}
+		</div>
+		{% endif %}
+	</div>
+{% endblock %}
+{% block script %}
+	async function place_cart_orders() {
+		await fetch("/order/place_cart_order", {method: 'POST'})
+		window.location.reload()
+	}
+{% endblock %}

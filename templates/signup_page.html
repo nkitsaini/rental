@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Signup here</title>
+    <style type="text/css">
+      #outer_container{
+        margin-top: 10vh;
+        background-color: rgb(230, 230, 230);
+        border-radius: 100px;
+        height: 70vh;
+        width: 100vw;
+        box-shadow: 12px 12px 22px grey;
+      }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container" style="margin: auto;width: max-content;">
+      <div class="row">
+        <div clas="col-sm-12" id="outer_container">
+          <br><br><br><br>
+          <h1 style="text-align: center;">Welcome Signup Here</h1>       <br />
+          <form action="/do_sign_up", method="POST">
+            <!-- 1st row -->
+            <div class="row justify-content-center">
+              <!-- First name -->
+              <div class="w-25 mr-5" style="float: left;">
+                <label for="first_name"></label>
+                <input type="text" class="form-control input-lg " placeholder="Enter first name" name="first_name" id="first_name" required>
+              </div>
+              <!-- last name -->
+              <div class="w-25 ml-5" style="float: left;">
+                <label for="last_name"></label>
+                <input type="text" class="form-control input-lg" placeholder="Enter last name" name="last_name" id="last_name" required>
+              </div>
+            </div>
+            <!-- 2 nd row -->
+            <div class="row justify-content-center">
+              <!-- Email  -->
+              <div class="w-25 mr-5" style="float: left;">
+                <label for="email"></label>
+                <input type="email" class="form-control input-lg" placeholder="Enter Email" name="email" id="email" required>
+              </div>
+              <!-- phone no. -->
+              <div class="w-25 ml-5" style="float: left;">
+                <label for="address"></label>
+                <input type="address" class="form-control input-lg" placeholder="Your address" name="address" id="address" required>
+              </div>
+            </div>
+            <!-- 3 row -->
+            <div class="row justify-content-center">
+              <!-- Password  -->
+              <div class="w-25 mr-5" style="float: left;">
+                <label for="password"></label>
+                <input type="password" class="form-control input-lg" placeholder="Password" name="password" id="password" required>
+              </div>
+              <!-- conform password -->
+              <div class="w-25 ml-5" style="float: left;">
+                <label for="confirmation_password"></label>
+                <input type="password" class="form-control input-lg" placeholder="Confirm Password" name="confirmation_password" id="confirmation_password" required>
+              </div>
+            </div>
+            <!-- 4 th row -->
+            <!-- <div class="row mt-5 row" style="margin-left: 13vw;">
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male"><b><h4>Male</h4></b></label>
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female"><b><h4>Female</h4></b></label>
+                <input type="radio" id="other" name="gender" value="other">
+                <label for="other"><b><h4>Other</h4></b></label>
+            </div> -->
+            <div class="row" style="margin-left: 13vw;">
+              <button type="submit" class="btn btn-primary mb-3">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock %}

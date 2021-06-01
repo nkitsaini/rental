@@ -1,0 +1,1 @@
+{"users": {"1": {"name": "ankit", "email": "a@a.dev", "password": "some"}}, "sessions": {"1": {"created_at": "2021-05-31T02:00:50.158783+00:00", "user_id": 1, "token": "f350ec75ac9c4b73916afb5e8581303d"}}}

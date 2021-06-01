@@ -1,0 +1,7 @@
+tinydb
+fastapi
+uvicorn
+jinja2
+aiofiles
+python-multipart
+arrow

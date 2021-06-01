@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body %}
+	<div class="container center d-flex flex-column justify-content-center align-items-center" style="height: 70vh;">
+		{% if user is none %}
+			Welcome. <a href="/login_page">Sign In</a>
+		{% else %}
+			<div class="text-capitalize" style="margin-bottom: 15px;">
+				<h3>Welcome {{user.first_name}}</h3>
+			</div>
+		  <form class="form-inline my-2 my-lg-0" action="/see_shops" method="GET">
+			<input class="form-control mr-sm-2" type="search" placeholder="332404" aria-label="Search" name="pincode" id="pincode">
+			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Go To Shops</button>
+		  </form>
+		{% endif %}
+	</div>
+{% endblock %}
+{% block script %}
+		function go_to_pin_code() {
+			var a = document.getElementById("pincode_input")
+			window.location.href = window.location.origin + `/shops/${a.value}`;
+			console.log("done")
+		}
+{% endblock %}

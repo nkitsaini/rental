@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Rental</title>
+	{% block head %} {% endblock %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<!-- <style>
+	html, body, div, p, ul, li {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+		font-family: 'Roboto', sans-serif;
+		font-weight: 100;
+		}
+
+		/* This class is applied to the containing div <div class="nav"> and is used to set the background color and height of the navbar */
+		.nav {
+		background: #000;
+		height: 60px; /* set same as height & line-height below */
+		}
+
+		/* This rule centers the nav items verticaly in the bar with the height and line height properties. Spacing between the nav items is controlled by setting right and left padding.  */
+		.nav li {
+		display: inline-block;
+		list-style: none;
+		height: 60px; /* should be the same as line-height */
+		line-height: 60px; /* should be the same as height */
+		padding: 0 40px; /* "0" sets top and bottom padding to none */
+		}
+
+		/* :hover allows you change the background color of the nav items when you mouse over them. Play around with the transition value to change the speed of the hover transition. */
+		.nav li:hover {
+		background: red;
+		transition: background .3s;
+		}
+
+		/* This rule is applied to the link <a> tag. It lets you turn off the link underline and set the link text color. */
+		.nav-link {
+		color: #fff;
+		text-decoration: none;
+		}
+	</style> -->
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="#">Rental</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+	  
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		  <ul class="navbar-nav mr-auto">
+			<li class="nav-item active">
+			  <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+			</li>
+			<li class="nav-item active">
+			  <a class="nav-link" href="/show_orders">Orders + Cart <span class="sr-only">(current)</span></a>
+			</li>
+			{% if user is undefined or user is none %}
+			<li class="nav-item active">
+			  <a class="nav-link" href="/login_page">Log In <span class="sr-only">(current)</span></a>
+			</li>
+			<li class="nav-item active">
+			  <a class="nav-link" href="/sign_up">Sign Up <span class="sr-only">(current)</span></a>
+			</li>
+			{% else %}
+			<li class="nav-item active">
+			  <a class="nav-link" href="/logout"> Log Out <span class="sr-only">(current)</span></a>
+			</li>
+			{% endif %}
+			</li>
+		  </ul>
+		  <form class="form-inline my-2 my-lg-0" action="/see_shops" method="GET">
+			<input class="form-control mr-sm-2" type="search" placeholder="332404" aria-label="Search" name="pincode" id="pincode">
+			<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Go To Shops</button>
+		  </form>
+		</div>
+	  </nav>
+	<!-- <div class="nav">
+		<ul>
+			<li><a href="/" class="nav-link">Home</a></li>
+			<li><a href="/show_orders" class="nav-link">Orders</a></li>
+			{% if user is undefined or user is none %}
+			<li> <a href="/login_page" class="nav-link"> Sign In </a> </li>
+			<li> <a href="/sign_up" class="nav-link"> Sign Up </a> </li>
+			{% else %}
+			<li> <a href="/logout" class="nav-link"> Logout </a> </li>
+			{% endif %}
+			</li>
+		</ul>
+	</div> -->
+
+	{% if error is defined and error is not none %}
+		<div style="background-color: red; color: white"> {{error}} </div>
+	{% endif %}
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	{% block body %}
+	{% endblock %}
+</body>
+	<script>
+	{% block script %}
+	{% endblock %}
+	</script>
+</html>

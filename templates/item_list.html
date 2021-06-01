@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block head %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+{% endblock %}
+{% block body %}
+	{% if not items %}
+		No Items for this shop yet.
+	{% else %}
+	<div class="border text-center">
+		Shop: {{shop.name}}
+		<br>
+		Address: {{shop.address}}
+	</div>
+	<div class="container">
+	{% for item in items %}
+		<div class="row card" style="margin: 5px; margin-top: 15px">
+			<div class="card-body">
+				<div class="card-title">
+					{{item.name}}
+				</div>
+				<p> price: {{"%0.2f"| format(item.price)}}</p>
+				<span>
+					qnt: <span id={{ "qnt-" + item.id|string }}>{{counts[item.id]}}</span>
+				</span>
+				<div class='btn-group'>
+					<button class="btn btn-default" style="margin: 3px" onClick={{ "place_order_for_item(this," + item.id|string + ")" }}>+</button>
+					<button class="btn btn-default" style="margin: 3px" onClick={{ "remove_order_for_item(this," + item.id|string + ")" }}>-</button>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock %}
+{% block script %}
+	var shop_id = {{shop.id}};
+	async function place_order_for_item(button, item_id) {
+		console.log("placing for", item_id, button, shop_id, JSON.stringify({"item_id": item_id, "shop_id": shop_id}))
+		var r = await fetch("/order/place_order", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"item_id": item_id, "shop_id": shop_id})})
+		var amt = await r.json()
+		document.getElementById("qnt-"+item_id).innerHTML = `${amt}`
+	}
+	async function remove_order_for_item(button, item_id) {
+		console.log("removing for", item_id)
+		var r= await fetch("/order/decrease_order_quantity", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"item_id": item_id, "shop_id": shop_id})})
+		var amt = await r.json()
+		document.getElementById("qnt-"+item_id).innerHTML = `${amt}`
+
+	}
+{% endblock %}

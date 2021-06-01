@@ -1,0 +1,49 @@
+Database
+	-> user details (id, password, email, name, ... )
+	-> shop details (id, shop name, address, pincode)
+	-> items (id, name, image, list[shop_id], cost)  # same cost
+	-> orders (id, item_id, quantity, user_id, shop_id, status)
+	# cart
+
+# cash on delivery (total cost)
+# mongodb vs sqlite
+
+# sqlite
+# python 
+
+
+
+@app.get("/login")
+def get_login_page() -> Html:
+	...
+
+@app.post("/do_login")
+def do_login() -> Html:
+	# login the user and redirect to /shop_list_page
+	# if not valid user then send back to /login
+
+@app.get("/signup")
+def get_signup_page() -> Html:
+	...
+
+@app.get("/shop_list_page/{pincode}/{page_no}")
+def get_shop_list_page() -> Html:
+	...
+
+@app.get("/item_list_page/{shop_id}/{page_no}")
+def get_items() -> Html:
+	...
+
+@app.post("/place_order")
+def place_order(request: Request, item_id: str, quantity: str): # user login required
+	user = get_user(request)
+	if user is None:
+		return Redirect("/login")
+	...
+
+@app.get("/order_list")
+def get_orders() -> Html: # user login required
+	user = get_user(request)
+	if user is None:
+		return Redirect("/login")
+	...

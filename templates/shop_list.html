@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}
+	{% if invalid_pin_code %}
+		You can try <a href="/shops/332404">332404</a> as pincode
+	{% else %}
+		{% if not shops %}
+			Sorry, No Shops yet. We'll soon reach your city.
+		{% else %}
+		<div class="container">
+			{% for shop in shops %}
+			<a href={{ "/items/" + shop.id|string }}>
+				<div class="row card" style="margin: 5px">
+					<div class="card-body text-capitalize">
+						<div class="container">
+							<h5 class="card-title">{{shop.name}}</h5>
+							<p class="card-text">{{shop.address}}: {{shop.pincode}} </p>
+						</div>
+						<div class="container">
+							<span class="text text-sm">Total Items: {{shop.items|length}}</p>
+						</div>
+					</div>
+				</div>
+			</a>
+		</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+	{% endif %}
+{% endblock %}

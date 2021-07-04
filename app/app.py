@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, Query
+from fastapi import FastAPI, Response, Query, HTTPException
 from fastapi.params import Cookie, Depends, Form
 from collections import defaultdict
 from fastapi import status
@@ -6,15 +6,19 @@ import jinja2
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
+from starlette.datastructures import FormData
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
+from starlette.status import HTTP_412_PRECONDITION_FAILED
 from .models import *
+from fastapi.staticfiles import StaticFiles
 from typing import DefaultDict, Literal, Optional, overload
 
 from .db import Database, UserAlreadyExists
 
 templates = Jinja2Templates("templates")
 app = FastAPI()
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 DEBUG = True
 
 db = Database("rental.json")
@@ -50,6 +54,8 @@ class UserDepends:
 			return not_logged_action()
 		return user
 
+class AddressId(BaseModel):
+	address_id: int
 
 @app.get("/")
 def home_page(request: Request, user: Optional[User] = Depends(UserDepends(False))):
@@ -76,7 +82,6 @@ def do_signup(
 	first_name: str = Form(...),
 	last_name: str = Form(...),
 	email: str = Form(...),
-	address: str = Form(...),
 	password: str = Form(...),
 	confirmation_password: str = Form(...)
 ):
@@ -88,7 +93,7 @@ def do_signup(
 			}
 		)
 	try:
-		db.new_user(first_name, last_name, email, password, address)
+		db.new_user(first_name, last_name, email, password)
 		resp = RedirectResponse("/", status_code=status.HTTP_303_SEE_OTHER)
 		user = db.get_user(email, password)
 		session = db.create_session(user.id)
@@ -114,7 +119,7 @@ def get_shops(request: Request, pin_code: str = DEFAULT_PIN_CODE, page_no: int =
 	error = None
 	if not is_valid(pin_code):
 		error = f"pin_code: {pin_code} not valid"
-	shops = db.get_shops(pin_code)
+	shops = db.get_shops(int(pin_code))
 
 	return templates.TemplateResponse(
 		"shop_list.html", {
@@ -141,7 +146,7 @@ def get_items(request: Request, shop_id: int, page_no: int = Query(0), user: Opt
 	orders = db.get_user_orders(user.id)
 	counts = defaultdict(int)
 	for o in orders:
-		if o.status != OrderStatus.Cart:
+		if o.status != OrderStatus.Cart or o.shop_id != shop_id:
 			continue
 		if o.item_id in item_ids:
 			counts[o.item_id] += o.quantity
@@ -164,8 +169,16 @@ class OrderInfo(BaseModel):
 	item_id: int
 
 
-@app.post("/order/place_order")
+@app.post("/order/increase_order_quantity")
 async def add_order(request: Request, order_info: OrderInfo, user: User = Depends(UserDepends(True))):
+	orders = [o for o in db.get_user_orders(user.id) if o.status==OrderStatus.Cart]
+	if len(orders)>0:
+		pincode_now = db.get_shop(order_info.shop_id).address.pincode
+		pincode_old = db.get_shop(orders[0].shop_id).address.pincode
+		if pincode_now != pincode_old:
+			raise HTTPException(status_code=HTTP_412_PRECONDITION_FAILED,
+				detail="can't have order from two different pincodes at same time",
+				headers={"pincode": str(pincode_now)})
 	return db.new_order(user.id, order_info.item_id, order_info.shop_id)
 
 
@@ -175,8 +188,8 @@ def remove_order(request: Request, order_info: OrderInfo, user: User = Depends(U
 
 
 @app.post("/order/place_cart_order")
-def place_orders(request: Request, user: User = Depends(UserDepends(True))):
-	db.place_orders(user.id)
+def place_orders(request: Request, addressId: AddressId, user: User = Depends(UserDepends(True))):
+	db.place_orders(user.id, addressId.address_id)
 
 
 @app.get("/show_orders")
@@ -223,7 +236,7 @@ def log_user_in(
 			"login_page.html", {
 				"request": request,
 				"error": "Please check your email and password again"
-			}
+			}, 401
 		)
 	resp = RedirectResponse(f"/", status_code=status.HTTP_303_SEE_OTHER)
 	session = db.create_session(user.id)
@@ -241,6 +254,25 @@ def debug_bp(request: Request):
 	breakpoint()
 	return "done"
 
+@app.get("/add_address")
+def add_address_ep(request: Request, user: User = Depends(UserDepends(True))):
+	return templates.TemplateResponse(
+		"add_address.html", {
+			"request": request,
+			"user": user,
+		}
+	)
+
+@app.post("/do_address_add")
+def add_address_post(request: Request, user: User = Depends(UserDepends(True)),
+		person_name: str = Form(...), building: str = Form(...), city: str = Form(...),
+		district: str = Form(...), state: str = Form(...),
+		pincode: int = Form(...), landmark: Optional[str] = Form(None), street: Optional[str] = Form(None)):
+	address_id = db.add_address(person_name, pincode, building, city,
+		district, state, landmark, street)
+	db.add_address_to_user(address_id, user.id)
+
+	return RedirectResponse(f"/add_address", status_code=status.HTTP_303_SEE_OTHER)
 
 app.mount("/static", StaticFiles(directory="rental"), "static")
 

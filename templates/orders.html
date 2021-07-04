@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% block style %}
+	.address-input:checked + .card {
+		border: 1px solid blue;
+		border-radius: 3px;
+	}
+{% endblock %}
 {% block body %}
-	<h6 class="text-center"> All orders will be delivered to "{{user.address}}"</h6>
 	<div>
 		<h3 class="text-center"> Cart </h3>
 		{% if not cart_orders %}
@@ -13,17 +18,45 @@
 				<h5 class="card-title">
 					{{items[order.item_id].name}}
 				</h5>
-				<p> qantity: {{order.quantity}} <br>  price: {{"%0.2f" | format(order.quantity * items[order.item_id].price)}}<br> shop: {{shops[order.shop_id].name}} </p>
+				<p> qantity: {{order.quantity}} <br>  price: {{"%0.2f" | format(order.quantity * items[order.item_id].price)}} <span class="text-muted"> = {{order.quantity}} * {{"%0.2f" | format(items[order.item_id].price)}}</span><br> shop: <a href="/items/{{order.shop_id}}">{{shops[order.shop_id].name}}</a> </p>
 				
 			</div>
 		</div>
 		{% endfor %}
+		</div>
+		<br>
+		<div class="address-selector">
+			<h4 class="text-center">Choose Address: </h4>
+			<h5 class="text-center"><small class="text-muted text-center"> These orders can ohly be placed at Pincode {{shops[cart_orders[0].shop_id].address.pincode}}</small></h5>
+			<div class="addresses d-flex flex-wrap align-content-start" style="width: 50vw; margin: auto; margin-top: 15px; ">
+				{% for add in user.addresses %}
+				{% if add.pincode == shops[cart_orders[0].shop_id].address.pincode %}
+				<input type="radio" class="btn-check d-none address-input" name="options" id="option-{{add.id}}" autocomplete="off">
+				<div class="card" style="width: 24vw; margin: 0.3vw;">
+					<label for="option-{{add.id}}">
+					<div class="card-body">
+							<h5 class="card-title"> {{add.building}}</h5>
+							<p class="card-text text-capitalize"> {{add.person_name}}, {{ add.city }}, {{add.district}}, {{add.state}} - {{add.pincode}}</p>
+					</div>
+					</label>
+				</div>
+				{% endif %}
+				{% endfor %}
+				<div class="card" style="width: 24vw; margin: 0.3vw;">
+					<div class="card-body">
+							<h5><a href="/add_address" class = "text-center">+ Add Address</a></h5>
+					</div>
+				</div>
+			</div>
+			<br />
 		</div>
 		<div class="d-flex justify-content-center align-items-center">
 			<h4 class="text" style="margin: 10px"> Total: Rs {{total_cart_price}}</h4>
 			<button style="margin: 10px" class="btn btn-primary" onclick="place_cart_orders()">Place Order</button>
 		</div>
 		{% endif %}
+			
+		<!-- <h6 class="text-center"> All orders will be delivered to "{{user.addresses}}"</h6> -->
 	</div>
 	<div style="margin-top: 30px;">
 		<h3 class="text-center"> Previous Orders </h3>
@@ -38,7 +71,7 @@
 					{{items[order.item_id].name}}
 				</h5>
 				<p> qantity: {{order.quantity}} <br>  price: {{"%0.2f" | format(order.quantity * items[order.item_id].price)}}<br> shop: {{shops[order.shop_id].name}}
-				<br> status: {{order.status.name}}</p>
+				<br> status: {{order.status.name}} <br> address: {{order.address.repr_short()}}</p>
 			</div>
 		</div>
 		{% endfor %}
@@ -48,7 +81,18 @@
 {% endblock %}
 {% block script %}
 	async function place_cart_orders() {
-		await fetch("/order/place_cart_order", {method: 'POST'})
+		var checked = $("input[type='radio'][name='options']:checked");
+		if (checked.length == 0) {
+			alert("Please select an address")
+			return
+		}
+		var address_id = checked[0].id.split("-")[1];
+		var r = await fetch("/order/place_cart_order", {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({"address_id": address_id})}
+		)
+		var amt = await r.json()
 		window.location.reload()
 	}
 {% endblock %}

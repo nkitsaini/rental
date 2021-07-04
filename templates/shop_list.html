@@ -9,11 +9,11 @@
 		<div class="container">
 			{% for shop in shops %}
 			<a href={{ "/items/" + shop.id|string }}>
-				<div class="row card" style="margin: 5px">
+				<div class="row card" >
 					<div class="card-body text-capitalize">
 						<div class="container">
 							<h5 class="card-title">{{shop.name}}</h5>
-							<p class="card-text">{{shop.address}}: {{shop.pincode}} </p>
+							<p class="card-text">{{shop.address.building}}, {{shop.address.city}}, {{shop.address.pincode}} </p>
 						</div>
 						<div class="container">
 							<span class="text text-sm">Total Items: {{shop.items|length}}</p>
@@ -21,7 +21,6 @@
 					</div>
 				</div>
 			</a>
-		</div>
 			{% endfor %}
 		</div>
 		{% endif %}

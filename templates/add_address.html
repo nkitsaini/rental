@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block style %}
+	.form-group > label {
+		padding: 5px;
+	}
+	.address-form {
+		width: 50vw;
+		margin: auto;
+	}
+{% endblock %}
+<!--
+		person_name: str = Form(...), building: str = Form(...), city: str = Form(...),
+		district: str = Form(...), state: str = Form(...),
+		pincode: int = Form(...), landmark: Optional[str] = Form(None), street: Optional[str] = Form(...)):
+</div>
+
+-->
+{% block body %}
+	<div class="address-form" >
+	<form action="do_address_add" method="POST">
+		<div class="row">
+			<div class="col">
+			<div class="form-group">
+				<label for="person_name">Full Name: </label>
+				<input class="form-control" id="person_name" name="person_name" type="text" placeholder="Full Name"/>
+			</div>
+			<div class="form-group">
+				<label for="building">Flat, House no., Building, Company, Apartment: </label>
+				<input class="form-control" id="building" name="building" type="text" placeholder=""/>
+			</div>
+			<div class="form-group">
+				<label for="street">Street: </label>
+				<input class="form-control" id="street" name="street" type="text" placeholder=""/>
+			</div>
+			<div class="form-group">
+				<label for="landmark">Landmark: </label>
+				<input class="form-control" id="landmark" name="landmark" type="text" placeholder="Near Bus Stand"/>
+			</div>
+			</div>
+
+			<div class="col">
+			<div class="form-group">
+				<label for="city">City: </label>
+				<input class="form-control" id="city" name="city" type="text"  placeholder="City"/>
+			</div>
+
+
+			<div class="form-group">
+				<label for="district">District: </label>
+				<input class="form-control" id="district" name="district" type="text"  placeholder="District"/>
+			</div>
+
+			<div class="form-group">
+				<label for="state">State: </label>
+				<input class="form-control" id="state" name="state" type="text"  placeholder="State"/>
+			</div>
+
+			<div class="form-group">
+				<label for="pincode">Pin Code: </label>
+				<input class="form-control" id="pincode" name="pincode" type="text" placeholder="Pin Code"/>
+			</div>
+		
+			</div>
+		</div>
+
+
+		<button class="btn btn-primary center" type="submit">Add</button>
+	</form>
+	</div>
+	<div class="card-deck" style="width: 50vw; margin: auto; margin-top: 15px; ">
+		{% for add in user.addresses %}
+		<div class="card">
+		<div class="card-body">
+				<h5 class="card-title"> {{add.building}}</h5>
+				<p class="card-text text-capitalize"> {{add.person_name}}, {{ add.city }}, {{add.district}}, {{add.state}} - {{add.pincode}}</p>
+		</div>
+		</div>
+		{% endfor %}
+	</div>
+	
+{% endblock %}

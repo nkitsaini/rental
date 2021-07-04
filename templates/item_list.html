@@ -9,18 +9,19 @@
 	<div class="border text-center">
 		Shop: {{shop.name}}
 		<br>
-		Address: {{shop.address}}
+		Address: {{shop.address.repr_short()}} - <a href="/shops/{{shop.address.pincode}}">{{shop.address.pincode}}</a>
 	</div>
-	<div class="container">
+	<div class="container d-flex flex-wrap">
 	{% for item in items %}
-		<div class="row card" style="margin: 5px; margin-top: 15px">
+		<div class="row card" style="margin: 5px; margin-top: 15px; width: 500px; height: 400px">
+			<img class="card-img-left img-fluid" style=" height: 50%; max-height: 50%; max-width: 80%; padding: 40px; margin: auto" src={{ "/static/"+item.image_name }} alt="Card image cap">
 			<div class="card-body">
 				<div class="card-title">
 					{{item.name}}
 				</div>
 				<p> price: {{"%0.2f"| format(item.price)}}</p>
 				<span>
-					qnt: <span id={{ "qnt-" + item.id|string }}>{{counts[item.id]}}</span>
+					Qnt: <span id={{ "qnt-" + item.id|string }}>{{counts[item.id]}}</span>
 				</span>
 				<div class='btn-group'>
 					<button class="btn btn-default" style="margin: 3px" onClick={{ "place_order_for_item(this," + item.id|string + ")" }}>+</button>
@@ -39,7 +40,11 @@
 	var shop_id = {{shop.id}};
 	async function place_order_for_item(button, item_id) {
 		console.log("placing for", item_id, button, shop_id, JSON.stringify({"item_id": item_id, "shop_id": shop_id}))
-		var r = await fetch("/order/place_order", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"item_id": item_id, "shop_id": shop_id})})
+		var r = await fetch("/order/increase_order_quantity", {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({"item_id": item_id, "shop_id": shop_id})})
+		if (r.status == 412) {
+			alert(`You can only order for pincode: ${r.headers.get('pincode')}. or you can clear the cart`)
+			return
+		}
 		var amt = await r.json()
 		document.getElementById("qnt-"+item_id).innerHTML = `${amt}`
 	}

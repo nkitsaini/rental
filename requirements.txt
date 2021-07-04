@@ -5,3 +5,6 @@ jinja2
 aiofiles
 python-multipart
 arrow
+Faker
+tqdm
+httpx
